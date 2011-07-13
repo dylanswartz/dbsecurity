@@ -13,7 +13,12 @@
 		<div id="content">
 
 			<div id="form">
+			<form action="?p=login">
 			
+			Username: <input type="text" id="user" name="user"/> <br/>
+			Password: <input type="password" id="pass" name="pass"/>
+			
+			</form>	
 			</div>
 
 		</div>
