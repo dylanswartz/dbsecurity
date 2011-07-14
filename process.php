@@ -1,4 +1,6 @@
 <?php
+    include('config.php');
+
     function errorDetected() {
 
     }
@@ -17,9 +19,9 @@
     if (!$con) {
         $errorFlag = true;
         // kill everything
-        die("Error connecting to database.");
+        die("Error connecting to database. " . mysql_error());
     } else {
-        mysql_select_db("my_db", $con);
+        mysql_select_db(DB_NAME, $con);
     }
 
      // get the action to preform
@@ -31,15 +33,21 @@
             // get necessary data
             $userId = getUserId();
             $databaseName = clean($_POST["databaseName"]);
-            $jobType = "create"
+            $jobType = "create";
 
             // send a create job into the queue
-            $query = "INSERT INTO jobs (
-                            userId,
-                            databaseName,
-                            jobType)
-                            VAULES (
-                            )"
+            $query = "INSERT INTO jobs (userId, databaseName, jobType)
+                             VALUES ('$userId', '$databaseName', '$jobType')";
+
+            $result =mysql_query($query);
+
+            if (!$result) {
+                $errorFlag = true;
+                // kill everything
+                die("Error updating databse." . mysql_error());
+            }
+
+            echo "$databaseName is now ready to be created.";
             break;
         default:
             // show main "create form"

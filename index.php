@@ -42,13 +42,14 @@
     </header>
     <div id="main" role="main">
 
-         <div id="createForm">
+         <div id="createFormContainer">
             <h2>Create new database</h2>
-            <form action="process.php?p=create" method="post">
+            <form id="createForm"action="process.php?p=create" method="post">
 
                 <input type="text" id ="databaseName" name="databaseName" value="Enter database name..."/>
                 <input type="submit" id="createButton" name="createButton" value="Create"/>
             </form>
+            <div id="feedback"></div>
         </div>
 
     </div>
