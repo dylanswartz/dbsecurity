@@ -12,6 +12,9 @@ $("#createButton").click(function() {
         data:  postData,
         success: function(data){
             $("#feedback").html(data);
+            $("#feedback").fadeIn('slow');
+            $("#createForm #databaseName").val('');
+            setTimeout(function() { $('#feedback').fadeOut(); }, 3000);
         }
     });
 

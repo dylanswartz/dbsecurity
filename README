@@ -1,7 +1,14 @@
 TODO: 
-Make the UI better.(CSS, jQuery)
-Setup script in crontab to create databases. (50% complete)
-PHP database abstraction
-Get the spesifications 
+Make the UI better.
+Add database abstraction to PHP.
+Database needs work.
+Improve perl script (see below).
 
-7/18/11 14:05PM
+Perl script improvements
+------------------------
+dbcreator.pl :
+	- needs to work with mssql
+	- must create a config file
+	- & some other stuff
+
+7/19/11 2:10PM

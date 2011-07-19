@@ -38,19 +38,23 @@
 
   <div id="container">
     <header>
-        <h1>SVSU Database App</h1>
+            <img src="img/svsu-logo.jpg"/>
     </header>
+
     <div id="main" role="main">
 
-         <div id="createFormContainer">
-            <h2>Create new database</h2>
             <form id="createForm"action="process.php?p=create" method="post">
+                <div id="feedback"></div>
+                <p>
+                    <label> Database Name <br/>
+                        <input type="text" class="textfield" id ="databaseName" name="databaseName" value=""/>
+                    </label>
+                </p>
+                <p class="submit">
+                    <input type="submit" id="createButton" name="createButton" value="Create"/>
+                </p>
 
-                <input type="text" id ="databaseName" name="databaseName" value="Enter database name..."/>
-                <input type="submit" id="createButton" name="createButton" value="Create"/>
             </form>
-            <div id="feedback"></div>
-        </div>
 
     </div>
     <footer>

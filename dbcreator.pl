@@ -1,6 +1,15 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+# This script queries a table contaning a list of jobs to
+# to preform on databases searching for jobs to "create"
+# a database. For each create job, the script attempts
+# to create the database. If the database is successfully
+# created, then the job is marked complete and added to
+# a table contaning "completed jobs"; if it fails, the 
+# job is marked as "failed" and added to the "failed jobs"
+# table.
+
 
 # Use the DBI module
 # The DBI is the standard database interface module for Perl.

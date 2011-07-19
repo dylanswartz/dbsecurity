@@ -130,11 +130,11 @@ input:invalid, textarea:invalid {
 /* These selection declarations have to be separate
    No text-shadow: twitter.com/miketaylr/status/12228805301
    Also: hot pink! */
-::-moz-selection{ background: #FF5E99; color:#fff; text-shadow: none; }
-::selection { background:#FF5E99; color:#fff; text-shadow: none; }
+::-moz-selection{ background: #c41230; color:#fff; text-shadow: none; }
+::selection { background:#c41230; color:#fff; text-shadow: none; }
 
 /* j.mp/webkit-tap-highlight-color */
-a:link { -webkit-tap-highlight-color: #FF5E99; }
+a:link { -webkit-tap-highlight-color: #c41230; }
 
 /* Make buttons play nice in IE:
    www.viget.com/inspire/styling-the-button-element-in-internet-explorer/ */
@@ -169,11 +169,71 @@ a:hover { color: #036; }
  */
 
 
+#container {
+	margin:50px 0px; padding:0px;
+	text-align:center;
+}
 
+header {
+    width:400px;
+    margin:0px auto;
+    text-align:left;
+}
 
+#main {
+	width:400px;
+	margin:0px auto;
+	text-align:left;
+	padding:15px;
+}
 
+form {
+        padding:26px 24px 46px;
+        font-weight:normal;
+        -moz-border-radius:3px;
+        -khtml-border-radius:3px;
+        -webkit-border-radius:3px;
+        border-radius:3px;
+        background:#fff;
+        border:1px solid #e5e5e5;
+        -moz-box-shadow:rgba(200,200,200,0.7) 0 4px 10px -1px;
+        -webkit-box-shadow:rgba(200,200,200,0.7) 0 4px 10px -1px;
+        -khtml-box-shadow:rgba(200,200,200,0.7) 0 4px 10px -1px;
+        box-shadow:rgba(200,200,200,0.7) 0 4px 10px -1px;
+}
 
+form .textfield {
+    font-weight: 200;
+    font-size: 18px;
+    width: 97%;
+    padding: 3px;
+    padding-top: 3px;
+    margin-top: 2px;
+    margin-right: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #E5E5E5;
+    background: #FBFBFB;
+    outline: none;
+    -moz-box-shadow: inset 1px 1px 2px rgba(200,200,200,0.2);
+    -webkit-box-shadow: inset 1px 1px 2px rgba(200,200,200,0.2);
+    box-shadow: inset 1px 1px 2px rgba(200,200,200,0.2);
+}
 
+label {
+    color: #777;
+    font-size: 14px;
+    padding-top: 3px;
+}
+
+.submit {
+    float: right;
+}
+
+#feedback {
+    margin-top: -16px;
+    color: #c41230;
+    display: none;
+}
 
 /**
  * Non-semantic helper classes: please define your styles before this section.

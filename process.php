@@ -47,7 +47,7 @@
                 die("Error updating databse." . mysql_error());
             }
 
-            echo "$databaseName is now ready to be created.";
+            echo "$databaseName is now scheduled to be created!";
             break;
         default:
             // show main "create form"
