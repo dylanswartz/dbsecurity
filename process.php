@@ -36,7 +36,7 @@
             $jobType = "create";
 
             // send a create job into the queue
-            $query = "INSERT INTO jobs (userId, databaseName, jobType)
+            $query = "INSERT INTO jobs (userId, databaseName, job)
                              VALUES ('$userId', '$databaseName', '$jobType')";
 
             $result =mysql_query($query);

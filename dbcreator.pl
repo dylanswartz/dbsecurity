@@ -1,25 +1,104 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+
+# Use the DBI module
+# The DBI is the standard database interface module for Perl.
+# It defines a set of methods, variables and conventions that 
+# provide a consistent database interface independent of the 
+# actual database being used.
 use DBI;
 
-
-
-# MYSQL CONFIG VARIABLES
-my($host)  = "localhost";
+# Database config variables
+my($host)      = "localhost";
 my($database)  = "test_db";
-my($tablename) = "jobs";
 my($username)  = "developer";
 my($password)  = "SVSUd3v3lop3r";
+my($dbms)      = "mysql";
 
-my($dbh) = DBI->connect("DBI:mysql:${database};host=${host}", $username, $password, 
+# Database table names
+my($tablename) 	      = "jobs";
+my($successTableName) = "jobs_completed";
+my($failTableName)    = "jobs_failed";
+
+# Database field names
+my($jobType)   = "job";
+my($jobStatus) = "status";
+
+# Get the database driver handle
+# Used for database administration (e.g. database creation)
+my($drh) = DBI->install_driver($dbms);
+
+# Connnect to the databse 
+my($dbh) = DBI->connect("DBI:${dbms}:${database};host=${host}", $username, $password, 
 			   { RaiseError => 1 }
 	   	       );
 
-my($sth) = $dbh->prepare("SELECT * FROM ${tablename} WHERE status = 'pending'");
-$sth->execute() or die $sth->errstr;
-my($ref);
-while ( $ref = $sth->fetchrow_hashref() ) 
-{
-	print "$$ref{'id'} \t $$ref{'databaseName'} \n";
+# Prepare database query to select jobs
+my($select) = $dbh->prepare("SELECT * 
+			     FROM  ${tablename} 
+			     WHERE ${jobType}  ='create' 
+			     AND   ${jobStatus}='pending' 
+			     ORDER BY time");
+
+# Other variable declarations
+my($result);
+my($create);
+my($insert);
+my($update);
+my($errorFlag) 	  = 0; # assume no errors
+my($errorMessage) = "Failed - That's all I can say.";
+my($newStatus)	  = "";
+# Execute select qyert
+$select->execute() or die $select->errstr;
+
+if ($select->rows < 1 ) {
+	print "No jobs to process. \n";
 }
+
+while ( $result = $select->fetchrow_hashref() ) 
+{
+	# Try to complete job
+	$create = $drh->func('createdb', $$result{'databaseName'}, 
+			     $host, $username, $password, 'admin');
+
+	# Determine if successful
+	if ($create) {
+		#if successful, insert into $successTableName
+		$insert = $dbh->do("INSERT INTO $successTableName(id) 
+				    VALUES($$result{'id'})");
+		if (!$insert) {
+			$errorFlag = 1;
+			$errorMessage = "Database $$result{'databaseName'} created. Failed to insert into ${successTableName}";
+		}
+		print "Successfully created $$result{'databaseName'}\n";	
+	} else {
+		#if unsuccessful, insert into $failTableName
+		$insert = $dbh->do("INSERT INTO $failTableName(id) 
+			            VALUES($$result{'id'})");
+		
+		$errorFlag = 1;
+		$errorMessage = "Failed to create $$result{'databaseName'}\n";
+	}
+
+	if (!$errorFlag) { # No errors! :D
+		$newStatus = "complete";
+	} else { 	   # Errors! =(
+		$newStatus = "failed";
+	}
+	
+	# Update the status of the job	
+	$update = $dbh->do("UPDATE ${tablename}
+			    SET ${jobStatus}='${newStatus}'
+			    WHERE id = $$result{'id'}");
+
+	if (!$update) {
+		$errorMessage = "Failed to update status of job id $$result{'id'}";
+	}
+
+	print $errorMessage;
+
+}
+
+$select->finish();
+$dbh->disconnect();
