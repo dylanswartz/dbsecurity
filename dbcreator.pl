@@ -47,7 +47,7 @@ my($create);
 my($insert);
 my($update);
 my($errorFlag) 	  = 0; # assume no errors
-my($errorMessage) = "Failed - That's all I can say.";
+my($errorMessage) = "An error occured. \n";
 my($newStatus)	  = "";
 # Execute select qyert
 $select->execute() or die $select->errstr;
@@ -93,11 +93,13 @@ while ( $result = $select->fetchrow_hashref() )
 			    WHERE id = $$result{'id'}");
 
 	if (!$update) {
+		$errorFlag = 1;
 		$errorMessage = "Failed to update status of job id $$result{'id'}";
 	}
 
-	print $errorMessage;
-
+	if ($errorFlag) {
+		print $errorMessage;
+	}
 }
 
 $select->finish();
