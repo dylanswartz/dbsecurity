@@ -27,10 +27,10 @@ my($password)  = "SVSUd3v3lop3r";
 my($dbms)      = "mysql";
 
 # Database table names
-my($tablename) 	      = "jobs";
-my($successTableName) = "jobs_completed";
-my($failTableName)    = "jobs_failed";
-
+my($tablename) 	        = "jobs";
+my($successTableName)   = "jobs_completed";
+my($failTableName)      = "jobs_failed";
+my($databasesTableName) = "databaseList";
 # Database field names
 my($jobType)   = "job";
 my($jobStatus) = "status";
@@ -74,21 +74,34 @@ while ( $result = $select->fetchrow_hashref() )
 
 	# Determine if successful
 	if ($create) {
-		#if successful, insert into $successTableName
-		$insert = $dbh->do("INSERT INTO $successTableName(id) 
-				    VALUES($$result{'id'})");
+		#if successful
+		# insert into $databaseTableName
+		$insert = $dbh->do("INSERT INTO ${databasesTableName}(name, ownerId) 
+			            VALUES('$$result{'databaseName'}', $$result{'userId'})") or die($insert->errstr);
 		if (!$insert) {
 			$errorFlag = 1;
-			$errorMessage = "Database $$result{'databaseName'} created. Failed to insert into ${successTableName}";
+			$errorMessage = "Database $$result{'databaseName'} created. ".
+					"Failed to insert into ${databasesTableName} table.";
 		}
-		print "Successfully created $$result{'databaseName'}\n";	
+
 	} else {
 		#if unsuccessful, insert into $failTableName
-		$insert = $dbh->do("INSERT INTO $failTableName(id) 
+		$insert = $dbh->do("INSERT INTO ${failTableName}(id) 
 			            VALUES($$result{'id'})");
 		
 		$errorFlag = 1;
 		$errorMessage = "Failed to create $$result{'databaseName'}\n";
+	}
+
+	if (!$errorFlag) {
+		#insert into job into $successTableName
+		$insert = $dbh->do("INSERT INTO ${successTableName}(id) 
+				    VALUES($$result{'id'})");
+		if (!$insert) {
+			$errorFlag = 1;
+			$errorMessage = "Database $$result{'databaseName'} created. ".
+					"Failed to insert into ${successTableName} table.";
+		}
 	}
 
 	if (!$errorFlag) { # No errors! :D
@@ -109,6 +122,8 @@ while ( $result = $select->fetchrow_hashref() )
 
 	if ($errorFlag) {
 		print $errorMessage;
+	} else {
+		print "Successfully created $$result{'databaseName'}\n";
 	}
 
 }
@@ -118,7 +133,8 @@ $dbh->disconnect();
 
 sub createConfigFile {
 	my($databaseName) = $_[0];
-	my($password) = newPassword();
+	my($password) = newPassword(10);	# 10 char length pass
+
 
 }
 

@@ -38,7 +38,8 @@
 
   <div id="container">
     <header>
-            <img src="img/svsu-logo.jpg"/>
+            <img src="img/svsu-logo.jpg"/> <br/>
+            Database Creation Tool
     </header>
 
     <div id="main" role="main">
