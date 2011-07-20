@@ -17,6 +17,7 @@ use warnings;
 # provide a consistent database interface independent of the 
 # actual database being used.
 use DBI;
+use String::Random;
 
 # Database config variables
 my($host)      = "localhost";
@@ -109,7 +110,47 @@ while ( $result = $select->fetchrow_hashref() )
 	if ($errorFlag) {
 		print $errorMessage;
 	}
+
 }
 
 $select->finish();
 $dbh->disconnect();
+
+sub createConfigFile {
+	my($databaseName) = $_[0];
+	my($password) = newPassword();
+
+}
+
+# This function returns an 8 character random string
+# NOTE: requires String::Random module
+# http://search.cpan.org/~steve/String-Random-0.22/
+#sub newPassword {
+#	my($pass) = new String::Random;
+#	return $pass->randpattern("CCcc!ccn");
+#}
+
+# This function returns a string of length n; where
+# n is the first and only parameter. If no parameter
+# is supplied, n = 8
+sub newPassword {
+	my $password;
+	my $_rand;
+
+	my $password_length = $_[0];
+	if (!$password_length) {
+		$password_length = 8;
+	};
+	
+	my @chars = split(" ",
+		          "a b c d e f g h i j k l m n o
+			   p q r s t u v w x y z - _ % # |
+			   0 1 2 3 4 5 6 7 8 9");
+	srand;
+
+	for (my $i=0; $i < $password_length ;$i++) {
+		$_rand = int(rand 41);
+		$password .= $chars[$_rand];
+	}
+	return $password;
+}
