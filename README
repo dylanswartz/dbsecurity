@@ -7,7 +7,7 @@ Improve perl script (see below).
 Perl script improvements
 ------------------------
 dbcreator.pl :
-	- needs to work with mssql
+	- needs to work with mssql (eventually, not now)
 	- must create a config file
 	- & some other stuff
 
