@@ -76,7 +76,7 @@ while ( $result = $select->fetchrow_hashref() )
 	if ($create) {
 		#if successful
 		# insert into $databaseTableName
-		$insert = $dbh->do("INSERT INTO ${databasesTableName}(name, ownerId) 
+		$insert = $dbh->do("INSERT INTO ${databasesTableName}(name, creatorId) 
 			            VALUES('$$result{'databaseName'}', $$result{'userId'})") or die($insert->errstr);
 		if (!$insert) {
 			$errorFlag = 1;
@@ -133,7 +133,7 @@ $dbh->disconnect();
 
 sub createConfigFile {
 	my($databaseName) = $_[0];
-	my($password) = newPassword(10);	# 10 char length pass
+	my($password) = newPassword(16);	# 10 char length pass
 
 
 }
