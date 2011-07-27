@@ -1,8 +1,16 @@
 <?php
     include('config.php');
 
-    function errorDetected() {
+    // This function returns a JSON object containing a feedback
+    // message and a value of "good" or "bad".
+    // @input - $message: a string decribing how the script ended
+    // @input - $error: a optional boolen value indication if the script ended in error
+    // @return - a JSON encoded object with status and message properties
+    function feedback($message, $error = false) {
+        $return['msg'] = $message;
+        $return['status'] = $error;
 
+       return json_encode($return);
     }
 
     function getUserId() {
@@ -19,7 +27,8 @@
     if (!$con) {
         $errorFlag = true;
         // kill everything
-        die("Error connecting to database. " . mysql_error());
+        //die("Error connecting to database. " . mysql_error());
+        echo feedback("Failed to connect to database.", $errorFlag);
     } else {
         mysql_select_db(DB_NAME, $con);
     }
@@ -44,10 +53,15 @@
             if (!$result) {
                 $errorFlag = true;
                 // kill everything
-                die("Error updating databse." . mysql_error());
+                //die("Error updating databse." . mysql_error());
+                echo feedback("Failed to connect to database.", $errorFlag);
             }
 
-            echo "$databaseName is now scheduled to be created!";
+            //echo "$databaseName is now scheduled to be created!";
+            if (!$errorFlag) 
+                echo feedback("$databaseName is now scheduled to be created!");
+             else
+                echo feedback("An unknown error has occured.", $errorFlag);
             break;
         default:
             // show main "create form"

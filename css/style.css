@@ -230,9 +230,25 @@ label {
 }
 
 #feedback {
-    margin-top: -16px;
-    color: #00b716;
+    margin: 0 0 16px 0px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 12px;
+    -moz-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     display: none;
+}
+
+.bad {
+    background-color: #ffebe8;
+    border-color: #c00;
+}
+
+.good {
+    background-color: #eaffe8;
+    border-color: #00c005
 }
 
 /**

@@ -10,10 +10,17 @@ $("#createButton").click(function() {
         type: "POST",
         url: "process.php?p=create",
         data:  postData,
+        dataType : 'json',
         success: function(data){
-            $("#feedback").html(data);
-            $("#feedback").fadeIn('slow');
+           // $("#feedback").html(data.msg);
+            $("#feedback")
+                                    .removeClass()
+                                    .addClass((data.error !== true) ? 'good' : 'bad')
+                                    .text(data.msg)
+                                    .fadeIn('slow');
+
             $("#createForm #databaseName").val('');
+
             setTimeout(function() { $('#feedback').fadeOut(); }, 3000);
         }
     });

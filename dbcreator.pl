@@ -77,7 +77,7 @@ while ( $result = $select->fetchrow_hashref() )
 		#if successful
 		# insert into $databaseTableName
 		$insert = $dbh->do("INSERT INTO ${databasesTableName}(name, creatorId) 
-			            VALUES('$$result{'databaseName'}', $$result{'userId'})") or die($insert->errstr);
+			            VALUES('$$result{'databaseName'}', $$result{'userId'})");
 		if (!$insert) {
 			$errorFlag = 1;
 			$errorMessage = "Database $$result{'databaseName'} created. ".
@@ -100,8 +100,18 @@ while ( $result = $select->fetchrow_hashref() )
 		if (!$insert) {
 			$errorFlag = 1;
 			$errorMessage = "Database $$result{'databaseName'} created. ".
-					"Failed to insert into ${successTableName} table.";
+					"Failed to insert into ${successTableName} table.\n";
 		}
+	}
+
+	if (!$errorFlag) {
+		#create user & config file for the new databse
+		my $create = createUser($dbh, $$result{'databaseName'}, $$result{'databaseName'}, newPassword(16));
+		if (!$create) {
+			$errorFlag = 1;
+			$errorMessage = "Database $$result{'databaseName'} created. ".
+					"Failed to create user! No config file generated!\n";
+		}	
 	}
 
 	if (!$errorFlag) { # No errors! :D
@@ -133,10 +143,36 @@ $dbh->disconnect();
 
 sub createConfigFile {
 	my($databaseName) = $_[0];
-	my($password) = newPassword(16);	# 10 char length pass
-
-
+	
 }
+
+# This function creates a user with a all privlidges for
+# the specided databse.
+# @input  - databaseConnectionHandle, databaseName, username, password
+# @output - boolean value indicating success or failure
+sub createUser {
+	my $dbh      = $_[0];
+	my $database = $_[1];
+	my $username = $_[2];
+	my $password = $_[3];
+
+	# Create user
+	my $query = $dbh->do("CREATE USER '$username' IDENTIFIED BY '$password'");
+
+	if (!$query) {
+		return 0; # fail
+	} else {# if user created
+		# grant all privileges on $database
+		$query = $dbh->do("GRANT ALL PRIVILEGES ON  `$database` .* TO  '$username';");
+	}
+
+	if (!$query) {
+		return 0; # fail
+	}
+
+	return 1; 	  # success
+}
+
 
 # This function returns an 8 character random string
 # NOTE: requires String::Random module
@@ -149,6 +185,7 @@ sub createConfigFile {
 # This function returns a string of length n; where
 # n is the first and only parameter. If no parameter
 # is supplied, n = 8
+# @input - [passwordLength]
 sub newPassword {
 	my $password;
 	my $_rand;

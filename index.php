@@ -44,9 +44,11 @@
 
     <div id="main" role="main">
 
+            <div id="feedback" class="bad">
+                
+            </div>
+
             <form id="createForm"action="process.php?p=create" method="post">
-                <div id="feedback"></div>
-                <p>
                     <label> Database Name <br/>
                         <input type="text" class="textfield" id ="databaseName" name="databaseName" value=""/>
                     </label>
