@@ -248,7 +248,12 @@ label {
 
 .good {
     background-color: #eaffe8;
-    border-color: #00c005
+    border-color: #00c005;
+}
+
+.info {
+    background-color: #e8e9ff;
+    border-color: #0e00c0;
 }
 
 /**

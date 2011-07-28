@@ -12,14 +12,13 @@ $("#createButton").click(function() {
         data:  postData,
         dataType : 'json',
         success: function(data){
-           // $("#feedback").html(data.msg);
+            $("#createForm #databaseName").val('');
+
             $("#feedback")
                                     .removeClass()
                                     .addClass((data.error !== true) ? 'good' : 'bad')
                                     .text(data.msg)
                                     .fadeIn('slow');
-
-            $("#createForm #databaseName").val('');
 
             setTimeout(function() { $('#feedback').fadeOut(); }, 3000);
         }

@@ -1,6 +1,5 @@
 <?php
-    include('config.php');
-
+    //-------------------------------------------------------------------------------------------------------------------------------
     // This function returns a JSON object containing a feedback
     // message and a value of "good" or "bad".
     // @input - $message: a string decribing how the script ended
@@ -8,18 +7,25 @@
     // @return - a JSON encoded object with status and message properties
     function feedback($message, $error = false) {
         $return['msg'] = $message;
-        $return['status'] = $error;
+        $return['error'] = $error;
 
-       return json_encode($return);
+        return json_encode($return);
     }
+    //-------------------------------------------------------------------------------------------------------------------------------
 
+    //-------------------------------------------------------------------------------------------------------------------------------
     function getUserId() {
         return 1;
     }
+    //-------------------------------------------------------------------------------------------------------------------------------
 
+    //-------------------------------------------------------------------------------------------------------------------------------
     function clean($value) {
         return $value;
     }
+    //-------------------------------------------------------------------------------------------------------------------------------
+
+    include('config.php');
 
     $errorFlag = false;     // assume no errors
     // connect to the database
@@ -28,10 +34,9 @@
         $errorFlag = true;
         // kill everything
         //die("Error connecting to database. " . mysql_error());
-        echo feedback("Failed to connect to database.", $errorFlag);
-    } else {
-        mysql_select_db(DB_NAME, $con);
-    }
+        die(feedback("Failed to connect to database.", $errorFlag));
+    } 
+    mysql_select_db(DB_NAME, $con);
 
      // get the action to preform
     $p = clean($_GET["p"]);
@@ -54,11 +59,11 @@
                 $errorFlag = true;
                 // kill everything
                 //die("Error updating databse." . mysql_error());
-                echo feedback("Failed to connect to database.", $errorFlag);
+                die(feedback("Failed to connect to database.", $errorFlag));
             }
 
             //echo "$databaseName is now scheduled to be created!";
-            if (!$errorFlag) 
+            if (!$errorFlag)
                 echo feedback("$databaseName is now scheduled to be created!");
              else
                 echo feedback("An unknown error has occured.", $errorFlag);
@@ -67,6 +72,6 @@
             // show main "create form"
             break;
     }
-
     mysql_close($con);
+    
 ?>

@@ -44,7 +44,7 @@
 
     <div id="main" role="main">
 
-            <div id="feedback" class="bad">
+            <div id="feedback" class="info">
                 
             </div>
 
