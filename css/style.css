@@ -170,14 +170,54 @@ a:hover { color: #036; }
 
 
 #container {
-	margin:50px 0px; padding:0px;
+	margin:0px;
+        padding:0px;
 	text-align:center;
 }
 
 header {
-    width:400px;
+    width:100%;
     margin:0px auto;
     text-align:left;
+   box-shadow:rgba(200,200,200,0.7) 0 4px 10px -1px;
+}
+
+header #logo {
+    padding: 10px;
+    width: 250px;
+}
+
+nav {
+    width: 500px;
+    float: right;
+    height: 100%;
+    display:inline-block;
+    list-style:none;
+    padding:0;
+}
+
+nav  li {
+    float:right;
+    height: 63px;
+    line-height: 61px;
+    padding-left:10px;
+    padding-right:10px;
+    box-shadow: -2px -5px 10px rgba(200,200,200,0.7);
+}
+
+nav .active {
+    z-index: 10;
+}
+
+nav ul a {
+	display: block;
+	font-size: 20px;
+	text-decoration: none;
+        color: #082760;
+}
+
+nav ul a:hover {
+    color: #ccc;
 }
 
 #main {
@@ -229,8 +269,12 @@ label {
     float: right;
 }
 
+#placeholder {
+    padding-top:14px;
+    min-height: 50px;
+    
+}
 #feedback {
-    margin: 0 0 16px 0px;
     border-width: 1px;
     border-style: solid;
     padding: 12px;
