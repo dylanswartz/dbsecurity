@@ -168,7 +168,6 @@ a:hover { color: #036; }
  * Author: Dylan Swartz
  */
 
-
 #container {
 	margin:0px;
         padding:0px;
@@ -188,7 +187,7 @@ header #logo {
 }
 
 nav {
-    width: 500px;
+    width: 250px;
     float: right;
     height: 100%;
     display:inline-block;
@@ -221,10 +220,9 @@ nav ul a:hover {
 }
 
 #main {
-	width:400px;
 	margin:0px auto;
 	text-align:left;
-	padding:15px;
+	padding:15px 50px 15px 50px;
 }
 
 form {
@@ -298,6 +296,21 @@ label {
 .info {
     background-color: #e8e9ff;
     border-color: #0e00c0;
+}
+
+form .bad {
+    background: #ffebe8 url("../img/bad.png") no-repeat right;
+    border-color: #c00;
+}
+
+form .good {
+    background: #eaffe8 url("../img/good.png") no-repeat right;
+    border-color: #00c005;
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: normal;
 }
 
 /**

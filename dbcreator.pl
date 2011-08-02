@@ -30,10 +30,15 @@ my($dbms)      = "mysql";
 my($tablename) 	        = "jobs";
 my($successTableName)   = "jobs_completed";
 my($failTableName)      = "jobs_failed";
-my($databasesTableName) = "databaseList";
+my($databasesTableName) = "database_list";
+my($configTableName)    = "config_data";
+
 # Database field names
 my($jobType)   = "job";
 my($jobStatus) = "status";
+
+# File paths
+my($documentRoot) = "/home/dylan/public_html/";
 
 # Get the database driver handle
 # Used for database administration (e.g. database creation)
@@ -59,6 +64,7 @@ my($update);
 my($errorFlag) 	  = 0; # assume no errors
 my($errorMessage) = "An error occured. \n";
 my($newStatus)	  = "";
+my($newPassword)  = "";
 # Execute select qyert
 $select->execute() or die $select->errstr;
 
@@ -105,13 +111,29 @@ while ( $result = $select->fetchrow_hashref() )
 	}
 
 	if (!$errorFlag) {
-		#create user & config file for the new databse
-		my $create = createUser($dbh, $$result{'databaseName'}, $$result{'databaseName'}, newPassword(16));
+		# create user & config file for the new databse
+		$newPassword = newPassword(16);
+		my $create = createUser($dbh, $$result{'databaseName'}, $$result{'databaseName'}, $newPassword);
 		if (!$create) {
 			$errorFlag = 1;
 			$errorMessage = "Database $$result{'databaseName'} created. ".
 					"Failed to create user! No config file generated!\n";
 		}	
+	}
+
+	if (!$errorFlag) {
+		# this beast generates the config file and database config entries; 
+		# if it fails, an error is set.
+		if (!generateConfig($documentRoot.
+				    $$result{'databaseName'}, 
+				    $$result{'databaseName'}, 
+				    $$result{'databaseName'}, 
+				    $newPassword, "php",
+			    	    $dbh, $configTableName)) {
+			$errorFlag = 1;
+			$errorMessage = "Database $$result{'databaseName'} created. ".
+					"User created. No config file generated!\n";
+		}
 	}
 
 	if (!$errorFlag) { # No errors! :D
@@ -141,9 +163,20 @@ while ( $result = $select->fetchrow_hashref() )
 $select->finish();
 $dbh->disconnect();
 
+# This function creates the required configuration file for a program
+# to access a database. It also stores the config data in the database.
+# @input  - pathToFile, databaseName, databaseUser, databaseUserPassword, typeOfFile, databseHandle
+# @output - boolean value indicating success or failure
 sub createConfigFile {
-	my($databaseName) = $_[0];
-	
+	my($pathToFile)      = $_[0];
+	my($databaseName)    = $_[1];
+	my($databaseUser)    = $_[2];
+	my($databasePassword = $_[3];
+	my($typeOfFile)      = $_[4];
+	my($dbh)	     = $_[5];
+	my($configTable)     = $_[6];
+
+		
 }
 
 # This function creates a user with a all privlidges for

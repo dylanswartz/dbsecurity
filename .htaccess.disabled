@@ -1,0 +1,6 @@
+AuthUserFile ~/public_html/dbsecurity/.htpasswd
+AuthGroupFile /dev/null
+AuthName EnterPassword
+AuthType Basic
+
+require user dylan

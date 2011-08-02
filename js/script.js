@@ -30,7 +30,7 @@ $("#createButton").click(function() {
 // All the jQuery goodness inside this .ready function
 // will execute when the page is fully loaded
 $(document).ready(function() {
-    $("#stargate").load("create.php");
+    //$("#stargate").load("create.php");
 });
 
 

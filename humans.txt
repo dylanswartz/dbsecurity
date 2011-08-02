@@ -3,9 +3,7 @@
 
 
 /* TEAM */
-  <your title>Programmer : Dylan Swartz <your name>
-  Site: 
-  Twitter: 
-  Location: 
+Programmer & Designer : Dylan Swartz
+
 
   
