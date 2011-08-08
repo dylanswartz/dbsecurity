@@ -124,12 +124,8 @@ while ( $result = $select->fetchrow_hashref() )
 	if (!$errorFlag) {
 		# this beast generates the config file and database config entries; 
 		# if it fails, an error is set.
-		if (!generateConfig($documentRoot.
-				    $$result{'databaseName'}, 
-				    $$result{'databaseName'}, 
-				    $$result{'databaseName'}, 
-				    $newPassword, "php",
-			    	    $dbh, $configTableName)) {
+		if (!generateConfig($$result{'databaseName'}, 
+				    $newPassword, "php")) {
 			$errorFlag = 1;
 			$errorMessage = "Database $$result{'databaseName'} created. ".
 					"User created. No config file generated!\n";
@@ -141,11 +137,11 @@ while ( $result = $select->fetchrow_hashref() )
 	} else { 	   # Errors! =(
 		$newStatus = "failed";
 	}
-	
+
 	# Update the status of the job	
 	$update = $dbh->do("UPDATE ${tablename}
-			    SET ${jobStatus}='${newStatus}'
-			    WHERE id = $$result{'id'}");
+			    SET ${jobStatus}='${newStatus}' 
+			    WHERE id = '$$result{'id'}'");
 
 	if (!$update) {
 		$errorFlag = 1;
@@ -165,18 +161,27 @@ $dbh->disconnect();
 
 # This function creates the required configuration file for a program
 # to access a database. It also stores the config data in the database.
-# @input  - pathToFile, databaseName, databaseUser, databaseUserPassword, typeOfFile, databseHandle
+# @input  - databaseName,  databasePassword, extension
 # @output - boolean value indicating success or failure
-sub createConfigFile {
-	my($pathToFile)      = $_[0];
-	my($databaseName)    = $_[1];
-	my($databaseUser)    = $_[2];
-	my($databasePassword = $_[3];
-	my($typeOfFile)      = $_[4];
-	my($dbh)	     = $_[5];
-	my($configTable)     = $_[6];
+sub generateConfig {
+	my($goodData) = 1;
+	my($select)   = $dbh->prepare("SELECT id FROM $databasesTableName WHERE name = '$_[0]'");	
+	my($path)     = $documentRoot.$_[0]."_config.".$_[2];
+	$select->execute();
+
+	if ($select->rows < 1 ) {
+	        $goodData = 0;
+	}
+
+	while ( $result = $select->fetchrow_hashref() )
+	{
+		my($insert) = $dbh->do("INSERT INTO $configTableName(databaseId, username, password, path)".
+			               "VALUES('$$result{'id'}', '$_[0]', '$_[1]', '$path')");	
 
 		
+	}
+
+	return 1;
 }
 
 # This function creates a user with a all privlidges for
