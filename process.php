@@ -56,8 +56,26 @@
                 echo feedback("An unknown error has occured.", $errorFlag);
             break;
        case "loadmanage":
-                echo feedback("We're all good!", false);
-                break;
+            $return['msg'] = "An error occured! Oh, noes!";
+            $return['error'] = true;
+            $userDatabases = array();
+            $user = getUser();
+            $query = "SELECT * FROM database_list WHERE creator = '$user'";
+            $result = mysql_query($query);
+
+            if (mysql_num_rows($result) < 1) {
+                $errorFlag = true;
+                $message ="Errr...You don't have any databases. How sad. ='[";
+            } else {
+                while ($row = mysql_fetch_assoc($result)) {
+                    $userDatabases[] = $row;
+                    $return['error'] = false;
+                    $return['msg'] = "Yuuss! We found your databases! :D";
+                }
+            }
+            $return['records'] = $userDatabases;
+            echo json_encode($return);
+            break;
         default:
             // show main "create form"
             break;

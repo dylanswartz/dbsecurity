@@ -20,7 +20,7 @@ $("#createButton").click(function() {
                                     .text(data.msg)
                                     .fadeIn('slow');
 
-            setTimeout(function() { $('#feedback').fadeOut(); }, 3000);
+            setTimeout(function() { $('#feedback').fadeOut(); }, 5000);
         }
     });
 
@@ -37,16 +37,21 @@ $(document).ready(function() {
        $.get("process.php?p=loadmanage",
        function(data){
 
-                $("#manageCanvas").html("Weeeee!")
-                                                  .wrapInner("<form>");
+                for (record in data.records) {
+                    $("#manageCanvas").append("<dt>" + data.records[record].name + "</dt>");
+                    //alert(record);
+                }
+
+                $("#manageCanvas").wrapInner("<dd>").wrapInner("<form>");
 
                 $("#feedback")
                                         .removeClass()
                                         .addClass((data.error !== true) ? 'good' : 'bad')
-                                        .text(data.msg)
-                                        .fadeIn('slow');
-
-                setTimeout(function() { $('#feedback').fadeOut(); }, 10000);
+                                        .text(data.msg);
+                 if (data.error) {
+                    $("#feedback").fadeIn('slow');
+                    setTimeout(function() { $('#feedback').fadeOut(); }, 10000);
+                 }
             },
             "json");
    }

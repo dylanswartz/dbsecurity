@@ -4,7 +4,7 @@ $JS_INCLUDES = array("manage.js");
 require_once ("overall_header.php") ;
 ?>
 
-<h1>Manage Databases</h1>
+<h1>Manage Jobs & Databases</h1>
 
 <div id="placeholder">
     <div id="feedback" class="info">
