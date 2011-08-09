@@ -52,3 +52,4 @@
       <div class="clearfix"></div>
 
 <div id="main" role="main">
+    <p></p>

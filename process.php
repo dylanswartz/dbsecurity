@@ -1,21 +1,7 @@
 <?php
     //-------------------------------------------------------------------------------------------------------------------------------
-    // This function returns a JSON object containing a feedback
-    // message and a value of "good" or "bad".
-    // @input - $message: a string decribing how the script ended
-    // @input - $error: a optional boolen value indication if the script ended in error
-    // @return - a JSON encoded object with status and message properties
-    function feedback($message, $error = false) {
-        $return['msg'] = $message;
-        $return['error'] = $error;
-
-        return json_encode($return);
-    }
-    //-------------------------------------------------------------------------------------------------------------------------------
-
-    //-------------------------------------------------------------------------------------------------------------------------------
-    function getUserId() {
-        return 1;
+    function getUser() {
+        return $_SERVER["PHP_AUTH_USER"];
     }
     //-------------------------------------------------------------------------------------------------------------------------------
 
@@ -25,7 +11,8 @@
     }
     //-------------------------------------------------------------------------------------------------------------------------------
 
-    include('config.php');
+    require_once('php/functions.php');
+    require_once('php/config.php');
 
     $errorFlag = false;     // assume no errors
     // connect to the database
@@ -45,13 +32,13 @@
     switch ($p) {
         case "create":
             // get necessary data
-            $userId = getUserId();
+            $user = getUser();
             $databaseName = clean($_POST["databaseName"]);
             $jobType = "create";
 
             // send a create job into the queue
-            $query = "INSERT INTO jobs (userId, databaseName, job)
-                             VALUES ('$userId', '$databaseName', '$jobType')";
+            $query = "INSERT INTO jobs (user, databaseName, job)
+                             VALUES ('$user', '$databaseName', '$jobType')";
 
             $result =mysql_query($query);
 
@@ -68,6 +55,9 @@
              else
                 echo feedback("An unknown error has occured.", $errorFlag);
             break;
+       case "loadmanage":
+                echo feedback("We're all good!", false);
+                break;
         default:
             // show main "create form"
             break;

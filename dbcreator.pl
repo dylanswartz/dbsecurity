@@ -65,7 +65,7 @@ my($errorFlag) 	  = 0; # assume no errors
 my($errorMessage) = "An error occured. \n";
 my($newStatus)	  = "";
 my($newPassword)  = "";
-# Execute select qyert
+# Execute select query
 $select->execute() or die $select->errstr;
 
 if ($select->rows < 1 ) {
@@ -82,8 +82,8 @@ while ( $result = $select->fetchrow_hashref() )
 	if ($create) {
 		#if successful
 		# insert into $databaseTableName
-		$insert = $dbh->do("INSERT INTO ${databasesTableName}(name, creatorId) 
-			            VALUES('$result->{'databaseName'}', $result->{'userId'})");
+		$insert = $dbh->do("INSERT INTO ${databasesTableName}(name, creator) 
+			            VALUES('$result->{'databaseName'}', '$result->{'user'}')");
 		if (!$insert) {
 			$errorFlag = 1;
 			$errorMessage = "Database $result->{'databaseName'} created. ".
@@ -190,10 +190,9 @@ sub generateConfig {
 		open(CONFIG_FILE, ">".$path); #open for write, overwrite
 		print CONFIG_FILE "<?php \n";
 		print CONFIG_FILE "/* \n * Config file for database: ${inName} \n";
-		print CONFIG_FILE " * Usage: <?php require_once(\"DB_CONFIG\"); ?> \n";
+		print CONFIG_FILE " * Usage: <?php require_once(\"../${fileName}\"); ?> \n";
 	       	print CONFIG_FILE " * Last Updated: ".localtime()."\n */ \n\n";
 
-		print CONFIG_FILE "define(\"DB_CONFIG\", \"../${fileName}\") \n";
 		print CONFIG_FILE "define(\"DB_HOSTNAME\", \"localhost\"); \n";
 	        print CONFIG_FILE "define(\"DB_NAME\", \"${inName}\"); \n";
 		print CONFIG_FILE "define(\"DB_USERNAME\", \"${inName}\"); \n";
