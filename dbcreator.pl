@@ -75,7 +75,7 @@ if ($select->rows < 1 ) {
 while ( $result = $select->fetchrow_hashref() ) 
 {
 	# Try to complete job
-	$create = $drh->func('createdb', $$result{'databaseName'}, 
+	$create = $drh->func('createdb', $result->{'databaseName'}, 
 			     $host, $username, $password, 'admin');
 
 	# Determine if successful
@@ -83,29 +83,29 @@ while ( $result = $select->fetchrow_hashref() )
 		#if successful
 		# insert into $databaseTableName
 		$insert = $dbh->do("INSERT INTO ${databasesTableName}(name, creatorId) 
-			            VALUES('$$result{'databaseName'}', $$result{'userId'})");
+			            VALUES('$result->{'databaseName'}', $result->{'userId'})");
 		if (!$insert) {
 			$errorFlag = 1;
-			$errorMessage = "Database $$result{'databaseName'} created. ".
+			$errorMessage = "Database $result->{'databaseName'} created. ".
 					"Failed to insert into ${databasesTableName} table.";
 		}
 
 	} else {
 		#if unsuccessful, insert into $failTableName
 		$insert = $dbh->do("INSERT INTO ${failTableName}(id) 
-			            VALUES($$result{'id'})");
+			            VALUES($result->{'id'})");
 		
 		$errorFlag = 1;
-		$errorMessage = "Failed to create $$result{'databaseName'}\n";
+		$errorMessage = "Failed to create $result->{'databaseName'}\n";
 	}
 
 	if (!$errorFlag) {
 		#insert into job into $successTableName
 		$insert = $dbh->do("INSERT INTO ${successTableName}(id) 
-				    VALUES($$result{'id'})");
+				    VALUES($result->{'id'})");
 		if (!$insert) {
 			$errorFlag = 1;
-			$errorMessage = "Database $$result{'databaseName'} created. ".
+			$errorMessage = "Database $result->{'databaseName'} created. ".
 					"Failed to insert into ${successTableName} table.\n";
 		}
 	}
@@ -113,10 +113,10 @@ while ( $result = $select->fetchrow_hashref() )
 	if (!$errorFlag) {
 		# create user & config file for the new databse
 		$newPassword = newPassword(16);
-		my $create = createUser($dbh, $$result{'databaseName'}, $$result{'databaseName'}, $newPassword);
+		my $create = createUser($dbh, $result->{'databaseName'}, $result->{'databaseName'}, $newPassword);
 		if (!$create) {
 			$errorFlag = 1;
-			$errorMessage = "Database $$result{'databaseName'} created. ".
+			$errorMessage = "Database $result->{'databaseName'} created. ".
 					"Failed to create user! No config file generated!\n";
 		}	
 	}
@@ -124,10 +124,10 @@ while ( $result = $select->fetchrow_hashref() )
 	if (!$errorFlag) {
 		# this beast generates the config file and database config entries; 
 		# if it fails, an error is set.
-		if (!generateConfig($$result{'databaseName'}, 
-				    $newPassword, "php")) {
+		if (!generateConfig($result->{'databaseName'}, 
+				    $newPassword, "php", $dbh)) {
 			$errorFlag = 1;
-			$errorMessage = "Database $$result{'databaseName'} created. ".
+			$errorMessage = "Database $result->{'databaseName'} created. ".
 					"User created. No config file generated!\n";
 		}
 	}
@@ -141,17 +141,17 @@ while ( $result = $select->fetchrow_hashref() )
 	# Update the status of the job	
 	$update = $dbh->do("UPDATE ${tablename}
 			    SET ${jobStatus}='${newStatus}' 
-			    WHERE id = '$$result{'id'}'");
+			    WHERE id = '$result->{'id'}'");
 
 	if (!$update) {
 		$errorFlag = 1;
-		$errorMessage = "Failed to update status of job id $$result{'id'}";
+		$errorMessage = "Failed to update status of job id $result->{'id'}";
 	}
 
 	if ($errorFlag) {
 		print $errorMessage;
 	} else {
-		print "Successfully created $$result{'databaseName'}\n";
+		print "Successfully created $result->{'databaseName'}\n";
 	}
 
 }
@@ -161,24 +161,44 @@ $dbh->disconnect();
 
 # This function creates the required configuration file for a program
 # to access a database. It also stores the config data in the database.
-# @input  - databaseName,  databasePassword, extension
+# @input  - databaseName,  databasePassword, extension, databaseHandle
 # @output - boolean value indicating success or failure
 sub generateConfig {
+	my($inName) = $_[0];
+        my($inPass) = $_[1];
+        my($inExt)  = $_[2];
+	my($inDbh)  = $_[3];
+
+	my($res);
 	my($goodData) = 1;
-	my($select)   = $dbh->prepare("SELECT id FROM $databasesTableName WHERE name = '$_[0]'");	
-	my($path)     = $documentRoot.$_[0]."_config.".$_[2];
+	my($select)   = $inDbh->prepare("SELECT id FROM $databasesTableName WHERE name = '$inName'");
+	my($fileName) = $inName."_config.".$inExt;	
+	my($path)     = $documentRoot.$fileName;
 	$select->execute();
 
 	if ($select->rows < 1 ) {
 	        $goodData = 0;
 	}
 
-	while ( $result = $select->fetchrow_hashref() )
+	while ( $res = $select->fetchrow_hashref() )
 	{
-		my($insert) = $dbh->do("INSERT INTO $configTableName(databaseId, username, password, path)".
-			               "VALUES('$$result{'id'}', '$_[0]', '$_[1]', '$path')");	
+		# Insert into database
+		my($insert) = $inDbh->do("INSERT INTO $configTableName(databaseId, username, password, path)".
+			                 "VALUES('$res->{'id'}', '$inName', '$inPass', '$path')");	
 
-		
+		# Create file
+		open(CONFIG_FILE, ">".$path); #open for write, overwrite
+		print CONFIG_FILE "<?php \n";
+		print CONFIG_FILE "/* \n * Config file for database: ${inName} \n";
+		print CONFIG_FILE " * Usage: <?php require_once(\"DB_CONFIG\"); ?> \n";
+	       	print CONFIG_FILE " * Last Updated: ".localtime()."\n */ \n\n";
+
+		print CONFIG_FILE "define(\"DB_CONFIG\", \"../${fileName}\") \n";
+		print CONFIG_FILE "define(\"DB_HOSTNAME\", \"localhost\"); \n";
+	        print CONFIG_FILE "define(\"DB_NAME\", \"${inName}\"); \n";
+		print CONFIG_FILE "define(\"DB_USERNAME\", \"${inName}\"); \n";
+		print CONFIG_FILE "define(\"DB_PASSWORD\", \"${inPass}\");\n";
+		print CONFIG_FILE "?>";
 	}
 
 	return 1;
